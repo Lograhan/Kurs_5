@@ -1,7 +1,7 @@
-from file_manager import File_manager
-from api.abs_class import Api
-import requests
 import json
+import requests
+
+from api.abs_class import Api
 from hh_api_config import par_comp
 
 
@@ -10,7 +10,7 @@ def printj(dict_to_print: dict) -> None:
     print(json.dumps(dict_to_print, indent=2, ensure_ascii=False))
 
 
-class HH_api(Api, File_manager):
+class HH_api(Api):
     """
     Класс для работы с HH.ru
     """
@@ -41,3 +41,7 @@ class HH_api(Api, File_manager):
         for vac in HH_api.get_api_comp(self)['items']:
             vacancy.append(requests.get(vac['vacancies_url']).json())
         return vacancy
+
+
+hh = HH_api()
+printj(hh.get_vacancy()[0]['items'][0]['id'])

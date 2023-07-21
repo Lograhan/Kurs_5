@@ -14,7 +14,7 @@ CREATE TABLE vacancy
 (
 	vacancy_id int PRIMARY KEY,
 	vacancy_name varchar (150) NOT NULL,
-	company_id int REFERENCES company(company_id),
+	company_id int REFERENCES company(company_id) ON DELETE CASCADE,
 	salary_min int,
 	salary_max int,
 	url varchar (50)
