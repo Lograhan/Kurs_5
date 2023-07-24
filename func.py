@@ -1,67 +1,37 @@
-import csv
 import json
-from data.full_vac import Vacancy
-from data.file_manager import File_manager
+
+import requests
+from api.class_hh import printj
 
 
-def printj(dict_to_print: dict) -> None:
-    """Выводит словарь в json-подобном удобном формате с отступами"""
-    print(json.dumps(dict_to_print, indent=2, ensure_ascii=False))
+def add_to_db_comp(database, data):
+    with database.conn.cursor() as cur:
+        for i in data['items']:
+            cur.execute("INSERT INTO company (company_id, company_name, vacancy_count)"
+                        "VALUES (%s, %s, %s);",
+                        (i['id'],
+                         i['name'],
+                         i['open_vacancies']))
+            database.conn.commit()
 
 
-def all_vacancy() -> list:
-    """
-    Функция для формирования единого списка всех вакансий.
-    Возвращает список в котором указаны вакансии с обоих сайтов.
-    """
-    all_vac = []
-    data_hh = File_manager.open_file('save_file/hh.ru.json')
-    for vacancy in data_hh:
-        vac = Vacancy(vacancy['name'], vacancy['alternate_url'], vacancy['salary']['from'])
-        all_vac.append(vac)
-
-    data_sj = File_manager.open_file('save_file/sj.ru.json')
-    for i in data_sj:
-        vac = Vacancy(i['profession'], i['link'], i['payment_from'])
-        all_vac.append(vac)
-
-    return all_vac
+def add_to_db_vacancy(database, data):
+    with database.conn.cursor() as cur:
+        for i in data:
+            cur.execute("INSERT INTO vacancy (vacancy_id, vacancy_name, company_id, salary_min,"
+                        "salary_max, url) VALUES (%s, %s, %s, %s, %s, %s);",
+                        (i['id'],
+                         i['name'],
+                         i['employer']['id'],
+                         i['salary']['from'],
+                         i['salary']['to'],
+                         i['alternate_url'],))
+            database.conn.commit()
 
 
-def create_file_csv():
-    """
-    Функция для создания файла .csv
-    Наполнение файла ведется в три столбца.
-    """
-    for vacancy in sorted(all_vacancy(), reverse=True):
-        with open('save_file/all_vacancy.csv', 'a', encoding='utf-8') as file:
-            data = csv.writer(file)
-            data.writerow((vacancy.name, vacancy.url, vacancy.zp))
-
-
-def clear_file_csv():
-    """
-    Функция для очистки файла .csv
-    После применения в файле остаются только наименования столбцов "Вакансия", "Ссылка на вакансию", "Указанная зарплата".
-    """
-    with open('save_file/all_vacancy.csv', 'w', encoding='utf-8') as file:
-        data = csv.writer(file)
-        data.writerow(
-            ["Вакансия",
-             "Ссылка на вакансию",
-             "Указанная зарплата"
-             ]
-        )
-
-
-def print_top_vac(n=None) -> list:
-    """
-    Функция для вывода в терминал определённого количества вакансий.
-    Данные берутся в отсортированном виде из полного списка вакансий с двух сайтов.
-    В атрибут передается количество желаемых вакансий, по умолчанию значение отсутствует.
-    Возвращает список
-    """
-    sort_vac = sorted(all_vacancy(), reverse=True)
-    return [print(i) for i in sort_vac[:n]]
-
+def delete_data_table(database, data):
+    with database.conn.cursor() as cur:
+        cur.execute('delete from vacancy;'
+                    'delete from company')
+        database.conn.commit()
 

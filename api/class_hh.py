@@ -39,9 +39,8 @@ class HH_api(Api):
         """
         vacancy = []
         for vac in HH_api.get_api_comp(self)['items']:
-            vacancy.append(requests.get(vac['vacancies_url']).json())
+            for i in requests.get(vac['vacancies_url']).json()['items']:
+                vacancy.append(i)
         return vacancy
 
 
-hh = HH_api()
-printj(hh.get_vacancy()[0]['items'][0]['id'])
