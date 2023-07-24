@@ -1,5 +1,5 @@
 par_comp = {
-    'area': 2,
-    'only_with_vacancies': True,
-    'per_page': 30
+    'area': 2,  # место (страна, город)
+    'only_with_vacancies': True, # не менять
+    'per_page': 10 # выводимые компании
 }

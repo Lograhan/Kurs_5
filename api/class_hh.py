@@ -1,7 +1,6 @@
-from file_manager import File_manager
-from api.abs_class import Api
-import requests
 import json
+import requests
+from api.abs_class import Api
 from hh_api_config import par_comp
 
 
@@ -10,9 +9,9 @@ def printj(dict_to_print: dict) -> None:
     print(json.dumps(dict_to_print, indent=2, ensure_ascii=False))
 
 
-class HH_api(Api, File_manager):
+class HH_api(Api):
     """
-    Класс для работы с HH.ru
+    Класс для работы с API HH.ru
     """
 
     def __init__(self, page=0) -> None:
@@ -31,13 +30,16 @@ class HH_api(Api, File_manager):
         data = requests.get('https://api.hh.ru/employers', self.par)
         return data.json()
 
-    def get_vacancy(self):
+    def get_vacancy(self) -> list[dict]:
         """
         Метод для получения списка вакансий, полученный из списка компаний,
-        возвращаемых в методе .get_api_comp
+        возвращаемых в методе.get_api_comp
         :return: Возвращает список в формате json.
         """
         vacancy = []
         for vac in HH_api.get_api_comp(self)['items']:
-            vacancy.append(requests.get(vac['vacancies_url']).json())
+            for i in requests.get(vac['vacancies_url']).json()['items']:
+                vacancy.append(i)
         return vacancy
+
+
