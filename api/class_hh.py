@@ -1,6 +1,5 @@
 import json
 import requests
-
 from api.abs_class import Api
 from hh_api_config import par_comp
 
@@ -12,7 +11,7 @@ def printj(dict_to_print: dict) -> None:
 
 class HH_api(Api):
     """
-    Класс для работы с HH.ru
+    Класс для работы с API HH.ru
     """
 
     def __init__(self, page=0) -> None:
@@ -31,10 +30,10 @@ class HH_api(Api):
         data = requests.get('https://api.hh.ru/employers', self.par)
         return data.json()
 
-    def get_vacancy(self):
+    def get_vacancy(self) -> list[dict]:
         """
         Метод для получения списка вакансий, полученный из списка компаний,
-        возвращаемых в методе .get_api_comp
+        возвращаемых в методе.get_api_comp
         :return: Возвращает список в формате json.
         """
         vacancy = []

@@ -6,9 +6,8 @@ import os
 from api.class_hh import printj
 import text_
 
-if __name__ == '__main__':
-    load_dotenv()
 
+def main():
     database = Dbmanager(
         host='localhost',
         database='postgres',
@@ -20,8 +19,7 @@ if __name__ == '__main__':
     company = hh.get_api_comp()
     vacancy = hh.get_vacancy()
 
-    delete_data_table(database, company)
-    delete_data_table(database, vacancy)
+    delete_data_table(database)
 
     add_to_db_comp(database, company)
     add_to_db_vacancy(database, vacancy)
@@ -61,3 +59,7 @@ if __name__ == '__main__':
             print('Пожалуйста, выберите желаемый вариант: \n')
             continue
 
+
+if __name__ == '__main__':
+    load_dotenv()
+    main()
